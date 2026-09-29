@@ -1,0 +1,1344 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mathe-Trainings</title>
+  <style>
+    :root {
+      --bg: #f3f7fb;
+      --panel: #fff;
+      --ink: #17233a;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --good: #15803d;
+      --bad: #b91c1c;
+      --border: #dbe4f0;
+      --sidebar: linear-gradient(180deg, #102a63 0%, #0d214d 100%);
+      --sidebar-muted: #cfe3ff;
+      --shadow: 0 16px 45px rgba(30, 64, 175, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 5% 5%, #dbeafe 0, transparent 32%), radial-gradient(circle at 95% 90%, #dcfce7 0, transparent 28%), var(--bg);
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--sidebar);
+      color: white;
+      padding: 26px 18px 20px;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,.08);
+    }
+
+    .brand {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      margin-bottom: 22px;
+      padding: 6px 10px;
+    }
+
+    .nav-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(191, 219, 254, .25);
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      padding: 12px 14px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .nav-btn:hover { transform: translateX(2px); }
+    .nav-btn.active {
+      background: rgba(37, 99, 235, 0.9);
+      border-color: rgba(191, 219, 254, 0.7);
+      box-shadow: 0 10px 22px rgba(37,99,235,.28);
+    }
+
+    .workspace {
+      flex: 1;
+      padding: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .app-panel {
+      display: none;
+      width: min(100%, 980px);
+    }
+
+    .app-panel.active { display: block; }
+
+    .rounding-shell {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .rounding-card {
+      background: var(--panel);
+      border: 1px solid rgba(219, 228, 240, .85);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card {
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid rgba(219, 228, 240, .85);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      padding: 30px 32px 24px;
+      color: #fff;
+      background: linear-gradient(135deg, #1d4ed8, #0891b2);
+    }
+
+    h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); }
+    header p { margin: 8px 0 0; opacity: .92; }
+    .content { padding: 28px 32px 32px; }
+    .settings {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    fieldset { margin: 0; min-width: 0; border: 0; padding: 0; }
+    legend { margin-bottom: 10px; font-weight: 800; }
+    .choice-row { display: flex; gap: 9px; flex-wrap: wrap; }
+    button, input { font: inherit; }
+    .choice, .op-choice {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: var(--ink);
+      font-weight: 700;
+      background: #f8fafc;
+      transition: .16s ease;
+    }
+    .choice:hover, .op-choice:hover { transform: translateY(-1px); border-color: #93c5fd; }
+    .choice.active, .op-choice.active { color: #fff; border-color: var(--primary); background: var(--primary); }
+    .op-choice { min-width: 48px; text-align: center; }
+    .task-area { padding-top: 28px; text-align: center; }
+    .task-label { color: var(--muted); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: .82rem; }
+    #task { margin: 9px 0 18px; font-size: clamp(2.3rem, 9vw, 4.8rem); font-weight: 800; letter-spacing: .03em; }
+    .answer-row { display: flex; justify-content: center; gap: 10px; }
+    #answer {
+      width: min(100%, 245px);
+      padding: 13px 15px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+    #answer:focus { border-color: var(--primary); box-shadow: 0 0 0 4px #dbeafe; }
+    .primary {
+      cursor: pointer;
+      padding: 13px 18px;
+      color: #fff;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 800;
+      background: var(--primary);
+    }
+    .primary:hover { background: var(--primary-dark); }
+    #feedback { min-height: 29px; margin: 16px 0 8px; font-size: 1.08rem; font-weight: 800; }
+    .good { color: var(--good); }
+    .bad { color: var(--bad); }
+    .hint { margin: 0; color: var(--muted); font-size: .93rem; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 27px;
+    }
+    .stat { padding: 15px 10px; border: 1px solid var(--border); border-radius: 14px; background: #f8fafc; }
+    .stat strong { display: block; font-size: 1.6rem; }
+    .stat span { color: var(--muted); font-size: .86rem; font-weight: 650; }
+    .actions { display: flex; justify-content: center; margin-top: 18px; }
+    .secondary { cursor: pointer; padding: 9px 13px; color: #334155; border: 1px solid var(--border); border-radius: 10px; background: #fff; font-weight: 700; }
+    .secondary:hover { background: #f8fafc; }
+
+    #frac-app .card {
+      padding: 0;
+    }
+
+    #frac-app .task {
+      min-height: 610px;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+      padding: 22px;
+    }
+
+    #frac-app .task h2 { margin: 0 0 12px; font-size: 1.25rem; }
+    #frac-app .prompt { color: var(--muted); margin: 4px 0 16px; min-height: 24px; }
+    #frac-app .visual { height: 420px; flex: 0 0 420px; display: flex; align-items: center; justify-content: center; border: 2px dashed #bfd0ef; border-radius: 14px; background: #f9fbff; margin: 0 0 20px; padding: 16px; overflow: hidden; }
+    #frac-app .fraction { display: inline-flex; flex-direction: column; vertical-align: middle; align-items: center; line-height: 1; font-size: clamp(2rem, 7vw, 4.1rem); font-weight: 750; min-width: 1.25em; }
+    #frac-app .fraction .bar { height: 3px; width: 1.35em; background: currentColor; margin: 7px 0; border-radius: 3px; }
+    #frac-app .percent-big, #frac-app .decimal-big { font-size: clamp(2.2rem, 8vw, 4.4rem); color: #102a63; font-weight: 800; }
+    #frac-app .rectangle-model { width: min(390px,94%); display: grid; gap: 0; border: 3px solid #213c75; border-radius: 9px; overflow: hidden; background: #fff; }
+    #frac-app .rectangle-segment { aspect-ratio: 1; background: #e9eef9; border-right: 1px solid #213c75; border-bottom: 1px solid #213c75; }
+    #frac-app .rectangle-segment:last-child { border-right: 0; }
+    #frac-app .rectangle-segment.filled { background: #4b89f4; }
+    #frac-app .bar-model { width: min(520px,95%); display: flex; height: 88px; border: 3px solid #213c75; border-radius: 9px; overflow: hidden; background: #fff; position: relative; }
+    #frac-app .bar-model::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg,transparent 0,transparent calc(5% - 1px),rgba(33,60,117,.62) calc(5% - 1px),rgba(33,60,117,.62) 5%); pointer-events: none; }
+    #frac-app .bar-piece { border-right: 1px solid #213c75; flex: 1; background: #fff; position: relative; z-index: 1; }
+    #frac-app .bar-piece.filled { background:#4b89f4; }
+    #frac-app .bar-piece:last-child { border-right: 0; }
+    #frac-app .percent-strip { width: min(470px, 96%); }
+    #frac-app .percent-strip-label { display:flex; justify-content:space-between; color:#344054; font-weight:700; font-size:.9rem; margin:0 0 7px; }
+    #frac-app .percent-strip-group { display:grid; gap:8px; }
+    #frac-app .percent-strip-unit { position:relative; height:52px; border:3px solid #213c75; border-radius:8px; overflow:hidden; background:#fff; }
+    #frac-app .percent-strip-unit-fill { position:absolute; left:0; top:0; bottom:0; background:#4b89f4; }
+    #frac-app .percent-strip-unit-lines { position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(90deg,transparent 0,transparent calc(5% - 1px),rgba(33,60,117,.62) calc(5% - 1px),rgba(33,60,117,.62) 5%); }
+    #frac-app .circle-model { width: min(225px,68vw); height:auto; overflow:visible; }
+    #frac-app .circle-model.single-circle { width: min(420px,92%); }
+    #frac-app .circle-group { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; align-items:center; justify-items:center; }
+    #frac-app .circle-group.single-circle { display:flex; justify-content:center; align-items:center; width:100%; grid-template-columns:none; }
+    #frac-app .circle-mini { width:80px; height:80px; }
+    #frac-app .circle-single { width:min(360px,92%); height:min(360px,92%); }
+    #frac-app .circle-outline { fill:none; stroke:#213c75; stroke-width:3; }
+    #frac-app .circle-sector { fill:#4b89f4; stroke:#155eef; stroke-width:1.2; }
+    #frac-app .circle-divider { stroke:#213c75; stroke-width:1.4; }
+    #frac-app .answer-wrap { display: grid; grid-template-columns: 1fr auto; gap: 9px; max-width: 470px; width: 100%; margin: 0 auto; }
+    #frac-app input[type=text] { width:100%; border:2px solid #b9c8e4; border-radius:9px; padding:12px 13px; font-size:1.05rem; }
+    #frac-app input[type=text]:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+    #frac-app .answer-action { border:0; background:var(--primary); color:#fff; padding:11px 16px; border-radius:9px; cursor:pointer; font-size:1rem; font-weight:750; }
+    #frac-app .answer-action:hover { background:var(--primary-dark); }
+    #frac-app .secondary { background:#e9eff9; color:#193e8d; }
+    #frac-app .feedback { min-height:50px; margin:12px auto 0; max-width:500px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+    #frac-app .feedback.ok { color:var(--good); }
+    #frac-app .feedback.bad { color:var(--bad); }
+    #frac-app .hint { min-height:41px; margin:9px auto 0; color:var(--muted); font-size:.93rem; max-width:520px; }
+    #frac-app #next { align-self:center; margin-top:auto; }
+    #frac-app .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:15px 0; }
+    #frac-app .stat { background:#f1f6ff; border-radius:10px; padding:12px 9px; text-align:center; }
+    #frac-app .stat strong { display:block; color:#123a91; font-size:1.5rem; }
+    #frac-app .stat span { color:var(--muted); font-size:.82rem; }
+    #frac-app .progress { height:10px; background:#e3e9f4; border-radius:10px; overflow:hidden; margin:9px 0 4px; }
+    #frac-app .progress > div { height:100%; background:linear-gradient(90deg,#155eef,#4f9cff); width:0%; transition:width .35s ease; }
+    #frac-app .mode-list { display:grid; gap:4px; }
+    #frac-app label.mode { display:flex; gap:10px; align-items:flex-start; padding:10px; border-radius:9px; cursor:pointer; }
+    #frac-app label.mode:hover, #frac-app label.mode:has(input:checked) { background:#eef4ff; }
+    #frac-app label.mode input { margin-top:3px; accent-color:var(--primary); }
+    #frac-app .representation-controls { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:14px 0; }
+    #frac-app .representation-group { min-width:0; }
+    #frac-app .representation-group legend { margin-bottom:6px; font-size:.9rem; }
+    #frac-app .representation-option { display:flex; align-items:center; gap:7px; padding:7px 6px; border-radius:7px; cursor:pointer; font-size:.88rem; font-weight:650; }
+    #frac-app .representation-option:has(input:checked) { background:#eef4ff; }
+    #frac-app .representation-option input { flex:0 0 auto; margin:0; accent-color:var(--primary); }
+    #frac-app .representation-option input:disabled { cursor:not-allowed; }
+    #frac-app .representation-option:has(input:disabled) { color:var(--muted); cursor:not-allowed; }
+    #frac-app .small { color:var(--muted); font-size:.9rem; }
+    #frac-app .rules { padding-left:20px; color:#344054; line-height:1.5; }
+    #frac-app .example { background:#fff8e6; border-left:4px solid #f5b700; padding:11px 12px; border-radius:0 8px 8px 0; margin-top:13px; }
+    #frac-app .hidden { display:none; }
+
+    #rounding .rounding-task {
+      padding: 22px;
+    }
+    #rounding .rounding-head {
+      padding: 30px 32px 24px;
+      color: #fff;
+      background: linear-gradient(135deg, #1d4ed8, #0891b2);
+    }
+    #rounding .rounding-head h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); }
+    #rounding .rounding-head p { margin: 8px 0 0; opacity: .92; }
+    #rounding .rounding-body { padding: 28px 32px 32px; }
+    #rounding .rounding-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    #rounding .rounding-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    #rounding .rounding-pill select {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    #rounding .round-task {
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: .04em;
+      margin: 16px 0 18px;
+      text-align: center;
+    }
+    #rounding .round-answer-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    #rounding .round-input {
+      width: min(100%, 220px);
+      padding: 13px 15px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      outline: none;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    #rounding .round-input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px #dbeafe; }
+    #rounding .round-check {
+      cursor: pointer;
+      padding: 13px 18px;
+      color: #fff;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 800;
+      background: var(--primary);
+    }
+    #rounding .round-check:hover { background: var(--primary-dark); }
+    #rounding .round-secondary {
+      cursor: pointer;
+      padding: 10px 13px;
+      color: #334155;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      font-weight: 700;
+    }
+    #rounding .round-secondary:hover { background: #f8fafc; }
+    #rounding .round-feedback { min-height: 30px; margin: 12px 0 12px; font-weight: 800; }
+    #rounding .round-feedback.good { color: var(--good); }
+    #rounding .round-feedback.bad { color: var(--bad); }
+    #rounding .round-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    #rounding .round-stat { padding: 15px 10px; border: 1px solid var(--border); border-radius: 14px; background: #f8fafc; text-align: center; }
+    #rounding .round-stat b { display: block; font-size: 1.6rem; }
+    #rounding .round-stat span { color: var(--muted); font-size: .85rem; }
+    #rounding .round-history { max-height: 260px; overflow: auto; border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; }
+    #rounding .round-item { display: flex; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; }
+    #rounding .round-item span:last-child { color: var(--ink); }
+    #rounding .small { color: var(--muted); font-size: .9rem; }
+    #numberline .numberline-body { padding: 30px 34px 34px; }
+    #numberline .numberline-task { max-width: 820px; margin: 0 auto; }
+    #numberline .numberline-modes { border: 0; padding: 0; margin: 0 0 24px; }
+    #numberline .numberline-modes legend { margin-bottom: 10px; font-weight: 800; }
+    #numberline .numberline-mode-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    #numberline .numberline-mode { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; background: #fff; cursor: pointer; font-weight: 700; }
+    #numberline .numberline-mode:has(input:checked) { border-color: var(--primary); background: #eff6ff; color: #173e91; }
+    #numberline .numberline-mode input { margin: 0; accent-color: var(--primary); }
+    #numberline .numberline-prompt { min-height: 32px; margin: 0 0 8px; text-align: center; font-size: 1.15rem; font-weight: 750; }
+    #numberline .numberline-board { padding: 14px 12px 0; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+    #numberline .numberline-axis { position: relative; height: 92px; max-width: 760px; margin: 0 auto; }
+    #numberline .numberline-track { position: absolute; top: 28px; left: 4%; right: 4%; height: 4px; border-radius: 4px; background: #334155; }
+    #numberline .numberline-tick { position: absolute; top: 22px; width: 2px; height: 16px; transform: translateX(-50%); background: #334155; }
+    #numberline .numberline-tick-major { top: 19px; height: 22px; }
+    #numberline .numberline-tick-label { position: absolute; top: 48px; transform: translateX(-50%); color: #334155; font-size: .78rem; font-weight: 650; }
+    #numberline .numberline-marker { position: absolute; z-index: 2; top: 20px; width: 20px; height: 34px; transform: translateX(-50%); }
+    #numberline .numberline-marker::before { position: absolute; top: 0; left: 2px; width: 16px; height: 16px; border: 3px solid #fff; border-radius: 50%; background: #dc2626; box-shadow: 0 1px 4px #33415580; content: ""; }
+    #numberline .numberline-marker::after { position: absolute; top: 13px; left: 9px; width: 2px; height: 19px; background: #dc2626; content: ""; }
+    #numberline .numberline-range { position: absolute; z-index: 3; top: 14px; left: calc(4% - 10px); width: calc(92% + 20px); height: 30px; margin: 0; appearance: none; background: transparent; cursor: pointer; }
+    #numberline .numberline-range::-webkit-slider-runnable-track { height: 4px; background: transparent; }
+    #numberline .numberline-range::-moz-range-track { height: 4px; background: transparent; }
+    #numberline .numberline-range::-webkit-slider-thumb { width: 20px; height: 20px; margin-top: -8px; appearance: none; border: 3px solid #fff; border-radius: 50%; background: var(--primary); box-shadow: 0 1px 4px #33415580; }
+    #numberline .numberline-range::-moz-range-thumb { width: 14px; height: 14px; border: 3px solid #fff; border-radius: 50%; background: var(--primary); box-shadow: 0 1px 4px #33415580; }
+    #numberline .numberline-answer-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 22px; }
+    #numberline .numberline-answer { width: min(100%, 220px); padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; text-align: center; font: inherit; font-size: 1.1rem; font-weight: 700; }
+    #numberline .numberline-answer:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px #dbeafe; }
+    #numberline .numberline-check, #numberline .numberline-next { padding: 12px 16px; border: 0; border-radius: 9px; font: inherit; font-weight: 750; cursor: pointer; }
+    #numberline .numberline-check { color: #fff; background: var(--primary); }
+    #numberline .numberline-check:hover { background: var(--primary-dark); }
+    #numberline .numberline-next { border: 1px solid var(--border); color: var(--ink); background: #fff; }
+    #numberline .numberline-next:hover { background: #f8fafc; }
+    #numberline .numberline-feedback { min-height: 32px; margin: 14px 0 8px; text-align: center; font-weight: 800; }
+    #numberline .numberline-feedback.good { color: var(--good); }
+    #numberline .numberline-feedback.bad { color: var(--bad); }
+    #numberline .numberline-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 420px; margin: 20px auto 0; }
+    #numberline .numberline-stat { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f8fafc; text-align: center; }
+    #numberline .numberline-stat strong { display: block; font-size: 1.4rem; }
+    #numberline .numberline-stat span { color: var(--muted); font-size: .88rem; }
+    @media (max-width: 820px) {
+      .app-shell { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        padding: 18px 16px;
+      }
+      .nav-btn { margin-bottom: 8px; }
+      .workspace { padding: 18px 12px; }
+      .rounding-shell { grid-template-columns: 1fr; }
+      #numberline .numberline-body { padding: 24px 22px; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 0; }
+      header, .content { padding: 22px 18px; }
+      .settings { grid-template-columns: 1fr; }
+      .answer-row { flex-direction: column; align-items: stretch; }
+      #answer { width: 100%; }
+      .primary { width: 100%; }
+      #frac-app .answer-wrap { grid-template-columns: 1fr; }
+      #frac-app .answer-action { width:100%; }
+      #frac-app .visual { height:330px; flex-basis:330px; }
+      #rounding .round-answer-row { flex-direction: column; align-items: stretch; }
+      #rounding .round-input, #rounding .round-check, #rounding .round-secondary { width: 100%; }
+      #rounding .rounding-body { padding: 22px 18px; }
+      #numberline .numberline-body { padding: 22px 18px; }
+      #numberline .numberline-answer-row { flex-direction: column; align-items: stretch; }
+      #numberline .numberline-answer, #numberline .numberline-check, #numberline .numberline-next { width: 100%; }
+      #numberline .numberline-tick-label { font-size: .68rem; }
+    }
+      body { padding: 0; }
+      header, .content { padding: 22px 18px; }
+      .settings { grid-template-columns: 1fr; }
+      .answer-row { flex-direction: column; align-items: stretch; }
+      #answer { width: 100%; }
+      .primary { width: 100%; }
+      #frac-app .answer-wrap { grid-template-columns: 1fr; }
+      #frac-app .answer-action { width:100%; }
+      #frac-app .visual { height:330px; flex-basis:330px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">Mathe-Trainings</div>
+      <nav aria-label="Programmauswahl">
+        <button class="nav-btn" type="button" data-view="fraction">Brüche</button>
+        <button class="nav-btn active" type="button" data-view="arithmetic">Grundrechenarten</button>
+        <button class="nav-btn" type="button" data-view="rounding">Runden</button>
+        <button class="nav-btn" type="button" data-view="numberline">Zahlenstrahl</button>
+      </nav>
+    </aside>
+
+    <main class="workspace">
+      <section id="arithmetic" class="app-panel active">
+        <section class="card" aria-labelledby="title">
+          <header>
+            <h1 id="title">Grundrechenarten-Trainer</h1>
+            <p>Übe Plus, Minus, Mal und Geteilt – inklusive negativer Zahlen.</p>
+          </header>
+          <div class="content">
+            <div class="settings">
+              <fieldset>
+                <legend>Schwierigkeit</legend>
+                <div class="choice-row" id="levelButtons">
+                  <button class="choice active" type="button" data-level="1">Stufe 1</button>
+                  <button class="choice" type="button" data-level="2">Stufe 2</button>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Rechenart</legend>
+                <div class="choice-row" id="operationButtons">
+                  <button class="op-choice active" type="button" data-operation="all" title="Alle Rechenarten">Alle</button>
+                  <button class="op-choice" type="button" data-operation="+">+</button>
+                  <button class="op-choice" type="button" data-operation="−">−</button>
+                  <button class="op-choice" type="button" data-operation="·">·</button>
+                  <button class="op-choice" type="button" data-operation=":">:</button>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="task-area">
+              <div class="task-label" id="levelInfo">Stufe 1: +/− bis 100, ·/: bis 10</div>
+              <div id="task" aria-live="polite">8 + 7 = ?</div>
+              <div class="answer-row">
+                <input id="answer" inputmode="numeric" autocomplete="off" aria-label="Deine Antwort" placeholder="Ergebnis" type="number" step="1">
+                <button class="primary" id="checkButton" type="button">Prüfen</button>
+              </div>
+              <div id="feedback" aria-live="polite"></div>
+              <p class="hint">Tipp: Mit der Eingabetaste kannst du deine Antwort prüfen.</p>
+              <div class="stats" aria-label="Statistik">
+                <div class="stat"><strong id="correct">0</strong><span>Richtig</span></div>
+                <div class="stat"><strong id="wrong">0</strong><span>Noch einmal üben</span></div>
+                <div class="stat"><strong id="solved">0</strong><span>Gelöste Aufgaben</span></div>
+              </div>
+              <div class="actions"><button class="secondary" id="resetButton" type="button">Statistik zurücksetzen</button></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="fraction" class="app-panel">
+        <div class="card" id="frac-app">
+          <header>
+            <h1>Brüche-Trainer</h1>
+            <p>Wandle zwischen Modellen, Brüchen, Prozenten und Dezimalzahlen um.</p>
+          </header>
+          <div class="grid" style="display:grid; grid-template-columns:1.2fr .8fr; gap:20px; align-items:start; padding:22px;">
+            <article class="task">
+              <h2 id="frac-taskTitle">Aufgabe</h2>
+              <p id="frac-prompt" class="prompt">Lade eine neue Aufgabe.</p>
+              <div id="frac-visual" class="visual" aria-live="polite"></div>
+              <form id="frac-answerForm" class="answer-wrap" autocomplete="off">
+                <input id="frac-answer" type="text" inputmode="decimal" placeholder="Deine Antwort" aria-label="Deine Antwort">
+                <button type="submit" class="answer-action">Prüfen</button>
+              </form>
+              <p id="frac-answerHelp" class="hint"></p>
+              <p id="frac-feedback" class="feedback" aria-live="polite"></p>
+              <button id="frac-next" class="secondary">Neue Aufgabe</button>
+            </article>
+            <aside>
+              <h2>Training auswählen</h2>
+              <p class="small">Wähle die Anfangs- und Enddarstellung.</p>
+              <div class="representation-controls">
+                <fieldset class="representation-group">
+                  <legend>Anfang</legend>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="picture" checked><span>Rechteckmodell</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="percentstrip"><span>Prozentstreifen</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="circle"><span>Kreisdiagramm</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="fraction"><span>Bruch</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="percent"><span>Prozent</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-startRepresentation" value="decimal"><span>Dezimalzahl</span></label>
+                </fieldset>
+                <fieldset class="representation-group">
+                  <legend>Ende</legend>
+                  <label class="representation-option"><input type="radio" name="frac-targetRepresentation" value="fraction" checked><span>Bruch</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-targetRepresentation" value="percent"><span>Prozent</span></label>
+                  <label class="representation-option"><input type="radio" name="frac-targetRepresentation" value="decimal"><span>Dezimalzahl</span></label>
+                </fieldset>
+              </div>
+              <div class="mode-list">
+                <label class="mode"><input type="checkbox" id="frac-mixedTraining"> <span><strong>Gemischtes Training</strong><br><span class="small">Wechselt zufällig zwischen Anfangs- und Enddarstellungen.</span></span></label>
+              </div>
+              <h3 style="margin:18px 0 8px; font-size:1rem;">Ergebnis</h3>
+              <div class="stats"><div class="stat"><strong id="frac-correct">0</strong><span>richtig</span></div><div class="stat"><strong id="frac-total">0</strong><span>Aufgaben</span></div><div class="stat"><strong id="frac-rate">–</strong><span>Trefferquote</span></div></div>
+              <div class="progress" aria-label="Lernfortschritt"><div id="frac-progressBar"></div></div>
+              <p class="small" id="frac-progressText">Noch keine Aufgabe beantwortet.</p>
+              <button id="frac-reset" class="secondary">Statistik zurücksetzen</button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section id="rounding" class="app-panel">
+        <div class="rounding-card">
+          <div class="rounding-head">
+            <h1>Runden üben</h1>
+          </div>
+          <div class="rounding-body">
+            <div class="rounding-shell">
+              <div class="card rounding-task">
+                <div class="rounding-controls">
+                  <div class="rounding-pill">
+                    <span>Modus:</span>
+                    <select id="round-mode">
+                      <option value="fixed1">Fest: auf 1 Nachkommastelle</option>
+                      <option value="fixed2">Fest: auf 2 Nachkommastellen</option>
+                      <option value="random">Zufällig: 0 bis 4 Nachkommastellen</option>
+                    </select>
+                  </div>
+                  <div class="rounding-pill">Runde auf: <span id="round-roundInfo">1 Nachkommastelle</span></div>
+                </div>
+
+                <div style="margin: 10px 0 8px; text-align:center; color: var(--muted); font-weight:700; letter-spacing:.04em; text-transform:uppercase; font-size:.78rem;">
+                  Aufgabe: Runde die Zahl auf die angegebene Nachkommastelle.
+                </div>
+                <div class="round-task" id="round-task">—</div>
+                <div class="round-answer-row">
+                  <label for="round-answer" class="small" style="align-self:center;">Deine Antwort:</label>
+                  <input id="round-answer" class="round-input" inputmode="decimal" placeholder="z. B. 3,14" />
+                  <button id="round-checkBtn" class="round-check" type="button">Prüfen</button>
+                  <button id="round-nextBtn" class="round-secondary" type="button">Nächste Aufgabe</button>
+                </div>
+                <div class="round-feedback" id="round-feedback"></div>
+
+                <div class="round-stats">
+                  <div class="round-stat"><b id="round-score">0</b><span>richtig</span></div>
+                  <div class="round-stat"><b id="round-tries">0</b><span>versucht</span></div>
+                  <div class="round-stat"><b id="round-streak">0</b><span>Serie</span></div>
+                </div>
+
+                <div class="round-history" id="round-history"></div>
+              </div>
+
+              <aside class="card" style="padding:22px;">
+                <h2 style="margin:0 0 10px;">Einstellungen</h2>
+                <div style="margin-bottom:10px;">
+                  <label class="small"><input type="checkbox" id="round-commaToggle" checked /> Dezimalkomma erlauben</label>
+                </div>
+                <p class="small">Hinweis: In der Eingabe kannst du ein Komma oder einen Punkt verwenden. Die App vergleicht den gerundeten Wert automatisch.</p>
+                <button id="round-resetBtn" class="round-secondary" style="width:100%;margin-top:12px;" type="button">Statistik zurücksetzen</button>
+                <div style="margin-top:16px;line-height:1.6;color:var(--ink);font-size:0.92rem;">
+                  <b>So funktioniert es:</b><br>
+                  • Festmodus: Auf ganze Zahlen, 1 oder 2 Nachkommastellen runden.<br>
+                  • Zufallsmodus: Auf 0, 1, 2, 3 oder 4 Nachkommastellen runden.<br>
+                  • Jede Aufgabe erzeugt eine Zahl mit 1 bis 7 Nachkommastellen.
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="numberline" class="app-panel">
+        <div class="card" id="numberline-app">
+          <header>
+            <h1>Zahlenstrahl</h1>
+            <p>Lies markierte Zahlen ab oder trage Zahlen passend ein.</p>
+          </header>
+          <div class="numberline-body">
+            <div class="numberline-task">
+              <fieldset class="numberline-modes">
+                <legend>Aufgabenart</legend>
+                <div class="numberline-mode-options">
+                  <label class="numberline-mode"><input type="radio" name="numberline-mode" value="read" checked> Ablesen</label>
+                  <label class="numberline-mode"><input type="radio" name="numberline-mode" value="place"> Eintragen</label>
+                  <label class="numberline-mode"><input type="radio" name="numberline-mode" value="mixed"> Gemischt</label>
+                </div>
+              </fieldset>
+              <p class="numberline-prompt" id="numberline-prompt" aria-live="polite"></p>
+              <div class="numberline-board">
+                <div class="numberline-axis" id="numberline-axis">
+                  <div class="numberline-track"></div>
+                  <div class="numberline-marker" id="numberline-marker" aria-hidden="true"></div>
+                  <input class="numberline-range" id="numberline-range" type="range" min="-10" max="10" step="1" value="0" aria-label="Position auf dem Zahlenstrahl">
+                  <div id="numberline-ticks" aria-hidden="true"></div>
+                </div>
+              </div>
+              <div class="numberline-answer-row">
+                <label for="numberline-answer" id="numberline-answer-label">Deine Antwort:</label>
+                <input class="numberline-answer" id="numberline-answer" type="text" inputmode="numeric" autocomplete="off" placeholder="Zahl eingeben">
+                <button class="numberline-check" id="numberline-check" type="button">Prüfen</button>
+                <button class="numberline-next" id="numberline-next" type="button">Neue Aufgabe</button>
+              </div>
+              <p class="numberline-feedback" id="numberline-feedback" aria-live="polite"></p>
+              <div class="numberline-stats" aria-label="Ergebnis">
+                <div class="numberline-stat"><strong id="numberline-score">0</strong><span>Richtig</span></div>
+                <div class="numberline-stat"><strong id="numberline-attempts">0</strong><span>Versuche</span></div>
+              </div>
+              <button class="numberline-next" id="numberline-reset" type="button" style="display:block;margin:16px auto 0;">Statistik zurücksetzen</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      const navButtons = document.querySelectorAll('.nav-btn');
+      const panels = document.querySelectorAll('.app-panel');
+      const STORAGE_KEY = 'mathTrainerLastView';
+
+      const setActiveView = (view) => {
+        navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
+        panels.forEach(panel => panel.classList.toggle('active', panel.id === view));
+        localStorage.setItem(STORAGE_KEY, view);
+      };
+
+      const savedView = localStorage.getItem(STORAGE_KEY) || 'arithmetic';
+      const hasSavedView = document.querySelector(`.nav-btn[data-view="${savedView}"]`);
+
+      if (hasSavedView) {
+        setActiveView(savedView);
+      } else {
+        setActiveView('arithmetic');
+      }
+
+      navButtons.forEach(button => {
+        button.addEventListener('click', () => setActiveView(button.dataset.view));
+      });
+    })();
+
+    (() => {
+      const state = { level: 1, operation: 'all', answer: 0, correct: 0, wrong: 0, solved: 0, locked: false };
+      const taskEl = document.getElementById('task');
+      const answerEl = document.getElementById('answer');
+      const feedbackEl = document.getElementById('feedback');
+      const levelInfoEl = document.getElementById('levelInfo');
+      const correctEl = document.getElementById('correct');
+      const wrongEl = document.getElementById('wrong');
+      const solvedEl = document.getElementById('solved');
+      const checkButton = document.getElementById('checkButton');
+
+      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const sample = items => items[randomInt(0, items.length - 1)];
+      const formatNumber = value => value < 0 ? `(${value})` : String(value);
+
+      function availableOperations() {
+        return state.operation === 'all' ? ['+', '−', '·', ':'] : [state.operation];
+      }
+
+      function createTask() {
+        const op = sample(availableOperations());
+        let a, b, result;
+
+        if (state.level === 1) {
+          if (op === '+') {
+            a = randomInt(0, 100); b = randomInt(0, 100 - a); result = a + b;
+          } else if (op === '−') {
+            a = randomInt(0, 100); b = randomInt(0, a); result = a - b;
+          } else if (op === '·') {
+            a = randomInt(1, 10); b = randomInt(1, 10); result = a * b;
+          } else {
+            b = randomInt(1, 10); result = randomInt(1, 10); a = b * result;
+          }
+        } else {
+          if (op === '+') {
+            a = randomInt(-100, 100); b = randomInt(-100, 100); result = a + b;
+          } else if (op === '−') {
+            a = randomInt(-100, 100); b = randomInt(-100, 100); result = a - b;
+          } else if (op === '·') {
+            a = randomInt(-10, 10); b = randomInt(-10, 10); result = a * b;
+          } else {
+            b = randomInt(-10, 10);
+            while (b === 0) b = randomInt(-10, 10);
+            result = randomInt(-10, 10);
+            a = b * result;
+          }
+        }
+
+        state.answer = result;
+        state.locked = false;
+        taskEl.textContent = `${formatNumber(a)} ${op} ${formatNumber(b)} = ?`;
+        feedbackEl.textContent = '';
+        feedbackEl.className = '';
+        answerEl.value = '';
+        answerEl.focus();
+      }
+
+      function updateStats() {
+        correctEl.textContent = state.correct;
+        wrongEl.textContent = state.wrong;
+        solvedEl.textContent = state.solved;
+      }
+
+      function checkAnswer() {
+        if (state.locked) return;
+        const input = answerEl.value.trim();
+        if (input === '') {
+          feedbackEl.textContent = 'Bitte gib zuerst ein Ergebnis ein.';
+          feedbackEl.className = 'bad';
+          answerEl.focus();
+          return;
+        }
+        const value = Number(input);
+        state.solved++;
+        state.locked = true;
+        if (Number.isInteger(value) && value === state.answer) {
+          state.correct++;
+          feedbackEl.textContent = 'Richtig! Sehr gut.';
+          feedbackEl.className = 'good';
+        } else {
+          state.wrong++;
+          feedbackEl.textContent = `Noch nicht richtig. Die Lösung lautet ${state.answer}.`;
+          feedbackEl.className = 'bad';
+        }
+        updateStats();
+        window.setTimeout(createTask, 1250);
+      }
+
+      document.getElementById('levelButtons').addEventListener('click', event => {
+        const button = event.target.closest('[data-level]');
+        if (!button) return;
+        state.level = Number(button.dataset.level);
+        document.querySelectorAll('[data-level]').forEach(el => el.classList.toggle('active', el === button));
+        levelInfoEl.textContent = state.level === 1
+          ? 'Stufe 1: +/− bis 100, ·/: bis 10'
+          : 'Stufe 2: +/− bis 100 mit negativen Zahlen, ·/: bis 10 mit negativen Zahlen';
+        createTask();
+      });
+
+      document.getElementById('operationButtons').addEventListener('click', event => {
+        const button = event.target.closest('[data-operation]');
+        if (!button) return;
+        state.operation = button.dataset.operation;
+        document.querySelectorAll('[data-operation]').forEach(el => el.classList.toggle('active', el === button));
+        createTask();
+      });
+
+      checkButton.addEventListener('click', checkAnswer);
+      answerEl.addEventListener('keydown', event => { if (event.key === 'Enter') checkAnswer(); });
+      document.getElementById('resetButton').addEventListener('click', () => {
+        state.correct = 0;
+        state.wrong = 0;
+        state.solved = 0;
+        updateStats();
+        createTask();
+      });
+      createTask();
+    })();
+
+    (() => {
+      const fiveStepBases = (() => {
+        const allowed = [];
+        for (const d of [5, 10, 20, 25, 50, 100]) {
+          for (let n = 5; n <= d; n += 5) allowed.push([n, d]);
+        }
+        return allowed;
+      })();
+
+      const bases = fiveStepBases;
+      const circleBases = [];
+      for (let d = 1; d <= 8; d++) {
+        for (let n = 1; n <= d; n++) {
+          circleBases.push([n, d]);
+        }
+      }
+
+      const startRepresentationInputs = document.querySelectorAll('input[name="frac-startRepresentation"]');
+      const targetRepresentationInputs = document.querySelectorAll('input[name="frac-targetRepresentation"]');
+      const mixedTrainingEl = document.getElementById('frac-mixedTraining');
+      const selectedStartRepresentation = () => document.querySelector('input[name="frac-startRepresentation"]:checked')?.value || 'picture';
+      const selectedTargetRepresentation = () => document.querySelector('input[name="frac-targetRepresentation"]:checked')?.value || 'fraction';
+      const sourceLabels = {
+        picture: 'Rechteckmodell',
+        percentstrip: 'Prozentstreifen',
+        circle: 'Kreisdiagramm',
+        fraction: 'Bruch',
+        percent: 'Prozent',
+        decimal: 'Dezimalzahl'
+      };
+      const targetLabels = { fraction: 'Bruch', percent: 'Prozent', decimal: 'Dezimalzahl' };
+      const mixedCombinations = [
+        { source: 'picture', target: 'fraction' }, { source: 'picture', target: 'percent' }, { source: 'picture', target: 'decimal' },
+        { source: 'percentstrip', target: 'fraction' }, { source: 'percentstrip', target: 'percent' }, { source: 'percentstrip', target: 'decimal' },
+        { source: 'circle', target: 'fraction' }, { source: 'circle', target: 'percent' }, { source: 'circle', target: 'decimal' },
+        { source: 'fraction', target: 'percent' }, { source: 'fraction', target: 'decimal' },
+        { source: 'percent', target: 'fraction' }, { source: 'percent', target: 'decimal' },
+        { source: 'decimal', target: 'fraction' }, { source: 'decimal', target: 'percent' }
+      ];
+      let current = null;
+      let score = Number(localStorage.getItem('bruchTrainerCorrect') || 0);
+      let total = Number(localStorage.getItem('bruchTrainerTotal') || 0);
+      let answered = false;
+
+      const gcd = (a, b) => b ? gcd(b, a % b) : a;
+      const reduce = (n, d) => {
+        const g = gcd(Math.abs(n), Math.abs(d));
+        return [n / g, d / g];
+      };
+      const fracHTML = (n, d) => `<span class="fraction" aria-label="${n} durch ${d}"><span>${n}</span><span class="bar"></span><span>${d}</span></span>`;
+      const fmtDec = (n, d) => (n / d).toString().replace('.', ',');
+      const fmtPct = (n, d) => {
+        const x = (n / d) * 100;
+        return Number.isInteger(x) ? String(x) : String(x).replace('.', ',');
+      };
+
+      function renderPicture(n, d) {
+        const totalSegments = Math.min(Math.max(Math.round(d / 5), 1), 20);
+        const rows = Math.min(4, Math.max(1, Math.ceil(totalSegments / 5)));
+        const cols = Math.ceil(totalSegments / rows);
+        const value = Math.abs(n / d);
+        const filled = Math.min(Math.max(Math.round(value * totalSegments), 0), totalSegments);
+        let pieces = '';
+        for (let i = 0; i < totalSegments; i++) {
+          pieces += `<div class="rectangle-segment ${i < filled ? 'filled' : ''}"></div>`;
+        }
+        return `<div class="rectangle-model" style="grid-template-columns:repeat(${cols},1fr); grid-template-rows:repeat(${rows},1fr);" aria-label="${n} von ${d} Rechteckteilen sind blau">${pieces}</div>`;
+      }
+
+      function renderPercentStrip(n, d) {
+        const value = Math.abs(n / d);
+        const units = Math.min(Math.max(Math.ceil(value), 1), 3);
+        const parts = [];
+        for (let i = 0; i < units; i++) {
+          const fill = i === units - 1 ? Math.max(0, (value - (units - 1)) * 100) : 100;
+          parts.push(`<div class="percent-strip-unit"><div class="percent-strip-unit-fill" style="width:${fill}%"></div><div class="percent-strip-unit-lines"></div></div>`);
+        }
+        return `<div class="percent-strip" aria-label="Ein Prozentstreifen mit blau gefärbtem Anteil"><div class="percent-strip-label"><span>0 %</span><span>100 %</span></div><div class="percent-strip-group" style="grid-template-columns:repeat(${units},minmax(0,1fr));">${parts.join('')}</div></div>`;
+      }
+
+      function renderCircle(n, d) {
+        const totalSegments = Math.min(Math.max(Math.round(d), 1), 8);
+        const filledSegments = Math.min(Math.max(Math.round((n / d) * totalSegments), 0), totalSegments);
+        return `<div class="circle-group single-circle">${renderCircleSegments(totalSegments, filledSegments, true)}</div>`;
+      }
+
+      function renderCircleSegments(totalSegments, filledSegments, single = false) {
+        const size = single ? 100 : 80;
+        const r = single ? 34 : 30;
+        const cx = size / 2;
+        const cy = size / 2;
+        const segments = [];
+        for (let i = 0; i < totalSegments; i++) {
+          const start = (i / totalSegments) * 360;
+          const end = ((i + 1) / totalSegments) * 360;
+          const startRad = (start - 90) * Math.PI / 180;
+          const endRad = (end - 90) * Math.PI / 180;
+          const x1 = cx + r * Math.cos(startRad);
+          const y1 = cy + r * Math.sin(startRad);
+          const x2 = cx + r * Math.cos(endRad);
+          const y2 = cy + r * Math.sin(endRad);
+          const largeArc = (end - start) > 180 ? 1 : 0;
+          const fill = i < filledSegments ? '#4b89f4' : '#fff';
+          segments.push(`<path d="M ${cx} ${cy} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${r} ${r} 0 ${largeArc} 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z" fill="${fill}" stroke="#213c75" stroke-width="1.5"></path>`);
+        }
+        return `<svg class="circle-model ${single ? 'circle-single' : 'circle-mini'}" viewBox="0 0 ${size} ${size}" role="img" aria-label="Kreisdiagramm mit blau gefärbtem Anteil">${segments.join('')}<circle class="circle-outline" cx="${cx}" cy="${cy}" r="${r}"></circle></svg>`;
+      }
+
+      function pickBase(source) {
+        const arr = source === 'circle' ? circleBases : bases;
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function makeTask() {
+        let source = selectedStartRepresentation();
+        let target = selectedTargetRepresentation();
+        if (mixedTrainingEl.checked) {
+          const combination = mixedCombinations[Math.floor(Math.random() * mixedCombinations.length)];
+          source = combination.source;
+          target = combination.target;
+        }
+
+        const [n, d] = pickBase(source);
+        current = { n, d, source, target };
+        answered = false;
+        const answerEl = document.getElementById('frac-answer');
+        const feedbackEl = document.getElementById('frac-feedback');
+        const taskTitleEl = document.getElementById('frac-taskTitle');
+        const promptEl = document.getElementById('frac-prompt');
+        const visualEl = document.getElementById('frac-visual');
+        const helpEl = document.getElementById('frac-answerHelp');
+
+        answerEl.value = '';
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'feedback';
+
+        let html;
+
+        if (source === 'picture') {
+          html = renderPicture(n, d);
+        } else if (source === 'percentstrip') {
+          html = renderPercentStrip(n, d);
+        } else if (source === 'circle') {
+          html = renderCircle(n, d);
+        } else if (source === 'fraction') {
+          html = fracHTML(n, d);
+        } else if (source === 'percent') {
+          html = `<div class="percent-big">${fmtPct(n, d)} %</div>`;
+        } else {
+          html = `<div class="decimal-big">${fmtDec(n, d)}</div>`;
+        }
+
+        taskTitleEl.textContent = `${sourceLabels[source]} → ${targetLabels[target]}`;
+        promptEl.textContent = `Wandle die Anfangsdarstellung in ${targetLabels[target]} um.`;
+        visualEl.innerHTML = html;
+        helpEl.textContent = target === 'fraction'
+          ? 'Gib den Anteil als Bruch an. Kürzen ist nicht erforderlich.'
+          : target === 'percent'
+            ? 'Gib die Prozentzahl mit oder ohne %-Zeichen ein.'
+            : 'Gib die Dezimalzahl ein, z. B. 0,75.';
+        answerEl.placeholder = target === 'fraction' ? 'z. B. 5/20' : target === 'percent' ? 'z. B. 25 %' : 'z. B. 0,25';
+        answerEl.focus();
+      }
+
+      function updateRepresentationControls() {
+        const mixed = mixedTrainingEl.checked;
+        startRepresentationInputs.forEach(input => { input.disabled = mixed; });
+        targetRepresentationInputs.forEach(input => {
+          input.disabled = mixed || input.value === selectedStartRepresentation();
+        });
+        const selectedTarget = document.querySelector('input[name="frac-targetRepresentation"]:checked');
+        if (!mixed && selectedTarget.disabled) {
+          targetRepresentationInputs.find(input => !input.disabled).checked = true;
+        }
+      }
+
+      function parseFraction(s) {
+        s = s.trim().replace(/\s/g, '');
+        const m = s.match(/^(-?\d+)\/(-?\d+)$/);
+        if (!m || Number(m[2]) === 0) return null;
+        let a = Number(m[1]);
+        let b = Number(m[2]);
+        if (b < 0) {
+          a = -a;
+          b = -b;
+        }
+        return [a, b];
+      }
+
+      function parseNumber(s) {
+        s = s.trim().replace(/\s/g, '').replace('%', '').replace(',', '.');
+        if (!/^-?\d+(\.\d+)?$/.test(s)) return null;
+        return Number(s);
+      }
+
+      function equivalentFractionValue(raw) {
+        const frac = parseFraction(raw);
+        if (frac) return frac[0] / frac[1];
+        const num = parseNumber(raw);
+        if (num !== null) return num;
+        return null;
+      }
+
+      function check() {
+        if (answered || !current) return;
+        const answerEl = document.getElementById('frac-answer');
+        const feedbackEl = document.getElementById('frac-feedback');
+        const raw = answerEl.value;
+        let ok = false;
+
+        const expected = current.n / current.d;
+        if (current.target === 'fraction') {
+          const fractionValue = equivalentFractionValue(raw);
+          ok = fractionValue !== null && Math.abs(fractionValue - expected) < 1e-12;
+          if (!ok && current.source === 'percentstrip') {
+            const percentageValue = parseNumber(raw);
+            ok = percentageValue !== null && Math.abs(percentageValue - expected * 100) < 1e-9;
+          }
+        } else if (current.target === 'percent') {
+          const percentageValue = parseNumber(raw);
+          ok = percentageValue !== null && Math.abs(percentageValue - expected * 100) < 1e-9;
+        } else {
+          const decimalValue = parseNumber(raw);
+          ok = decimalValue !== null && Math.abs(decimalValue - expected) < 1e-12;
+        }
+
+        answered = true;
+        total++;
+
+        if (ok) {
+          score++;
+          feedbackEl.textContent = 'Richtig! Sehr gut.';
+          feedbackEl.className = 'feedback ok';
+        } else {
+          const solution = current.target === 'fraction'
+            ? current.source === 'percentstrip'
+              ? `${current.n}/${current.d} oder ${fmtPct(current.n, current.d)} %`
+              : `${current.n}/${current.d}`
+            : current.target === 'percent'
+              ? `${fmtPct(current.n, current.d)} %`
+              : fmtDec(current.n, current.d);
+          feedbackEl.textContent = `Noch nicht richtig. Eine mögliche Lösung lautet: ${solution}.`;
+          feedbackEl.className = 'feedback bad';
+        }
+
+        localStorage.setItem('bruchTrainerCorrect', score);
+        localStorage.setItem('bruchTrainerTotal', total);
+        document.getElementById('frac-correct').textContent = score;
+        document.getElementById('frac-total').textContent = total;
+        const rate = total ? Math.round((score / total) * 100) : 0;
+        document.getElementById('frac-rate').textContent = total ? rate + ' %' : '–';
+        document.getElementById('frac-progressBar').style.width = rate + '%';
+        document.getElementById('frac-progressText').textContent = total ? `${score} von ${total} Aufgaben richtig (${rate} %).` : 'Noch keine Aufgabe beantwortet.';
+      }
+
+      document.getElementById('frac-answerForm').addEventListener('submit', event => {
+        event.preventDefault();
+        check();
+      });
+
+      document.getElementById('frac-next').addEventListener('click', makeTask);
+      document.getElementById('frac-reset').addEventListener('click', () => {
+        if (confirm('Möchtest du die Statistik wirklich zurücksetzen?')) {
+          score = 0;
+          total = 0;
+          localStorage.setItem('bruchTrainerCorrect', score);
+          localStorage.setItem('bruchTrainerTotal', total);
+          document.getElementById('frac-correct').textContent = score;
+          document.getElementById('frac-total').textContent = total;
+          document.getElementById('frac-rate').textContent = '–';
+          document.getElementById('frac-progressBar').style.width = '0%';
+          document.getElementById('frac-progressText').textContent = 'Noch keine Aufgabe beantwortet.';
+        }
+      });
+
+      startRepresentationInputs.forEach(input => {
+        input.addEventListener('change', () => {
+          updateRepresentationControls();
+          makeTask();
+        });
+      });
+      targetRepresentationInputs.forEach(input => input.addEventListener('change', makeTask));
+      mixedTrainingEl.addEventListener('change', () => {
+        updateRepresentationControls();
+        makeTask();
+      });
+
+      document.getElementById('frac-correct').textContent = score;
+      document.getElementById('frac-total').textContent = total;
+      const initialRate = total ? Math.round((score / total) * 100) : 0;
+      document.getElementById('frac-rate').textContent = total ? initialRate + ' %' : '–';
+      document.getElementById('frac-progressBar').style.width = total ? initialRate + '%' : '0%';
+      document.getElementById('frac-progressText').textContent = total ? `${score} von ${total} Aufgaben richtig (${initialRate} %).` : 'Noch keine Aufgabe beantwortet.';
+      updateRepresentationControls();
+      makeTask();
+    })();
+
+    (() => {
+      const taskEl = document.getElementById('round-task');
+      const answerEl = document.getElementById('round-answer');
+      const feedbackEl = document.getElementById('round-feedback');
+      const modeEl = document.getElementById('round-mode');
+      const roundInfoEl = document.getElementById('round-roundInfo');
+      const scoreEl = document.getElementById('round-score');
+      const triesEl = document.getElementById('round-tries');
+      const streakEl = document.getElementById('round-streak');
+      const historyEl = document.getElementById('round-history');
+      const commaToggle = document.getElementById('round-commaToggle');
+
+      let current = { number: 0, decimals: 0, roundTo: 0, answer: 0 };
+      let score = 0;
+      let tries = 0;
+      let streak = 0;
+      const history = [];
+
+      function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function formatNumber(n) {
+        return n.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 7 });
+      }
+
+      function parseInput(v) {
+        if (!commaToggle.checked) return NaN;
+        return Number(String(v).trim().replace(',', '.'));
+      }
+
+      function roundTo(n, digits) {
+        const factor = Math.pow(10, digits);
+        return Math.round((n + Number.EPSILON) * factor) / factor;
+      }
+
+      function generateTask() {
+        const decimals = randInt(1, 7);
+        let roundToDigits;
+        if (modeEl.value === 'fixed1') roundToDigits = 1;
+        else if (modeEl.value === 'fixed2') roundToDigits = 2;
+        else roundToDigits = randInt(0, 4);
+
+        const intPart = randInt(10, 999);
+        const frac = randInt(0, Math.pow(10, decimals) - 1).toString().padStart(decimals, '0');
+        const num = Number(`${intPart}.${frac}`);
+
+        current = { number: num, decimals, roundTo: roundToDigits, answer: roundTo(num, roundToDigits) };
+        taskEl.textContent = formatNumber(num);
+        if (roundToDigits === 0) {
+          roundInfoEl.textContent = 'ganze Zahl';
+          roundInfoEl.setAttribute('aria-label', 'Runde auf ganze Zahl');
+        } else {
+          roundInfoEl.textContent = `${roundToDigits} Nachkommastelle${roundToDigits === 1 ? '' : 'n'}`;
+          roundInfoEl.setAttribute('aria-label', `Runde auf ${roundToDigits} Nachkommastelle${roundToDigits === 1 ? '' : 'n'}`);
+        }
+        answerEl.value = '';
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'round-feedback';
+        answerEl.focus();
+      }
+
+      function addHistory(ok, userAnswer) {
+        history.unshift({
+          q: formatNumber(current.number),
+          r: current.roundTo,
+          a: formatNumber(current.answer),
+          u: userAnswer,
+          ok
+        });
+        history.splice(8);
+        historyEl.innerHTML = history.map(x => `<div class="round-item"><span>${x.q} → auf ${x.r} runden</span><span>${x.ok ? '✓' : '✗'} ${x.u} | Lösung: ${x.a}</span></div>`).join('');
+      }
+
+      function check() {
+        const user = parseInput(answerEl.value);
+        if (Number.isNaN(user)) {
+          feedbackEl.textContent = 'Bitte eine Zahl eingeben.';
+          feedbackEl.className = 'round-feedback bad';
+          return;
+        }
+
+        tries++;
+        const ok = Math.abs(user - current.answer) < 1e-9;
+        if (ok) {
+          score++;
+          streak++;
+          feedbackEl.textContent = 'Richtig!';
+          feedbackEl.className = 'round-feedback good';
+        } else {
+          streak = 0;
+          feedbackEl.textContent = `Falsch. Richtig ist ${formatNumber(current.answer)}.`;
+          feedbackEl.className = 'round-feedback bad';
+        }
+
+        scoreEl.textContent = score;
+        triesEl.textContent = tries;
+        streakEl.textContent = streak;
+        addHistory(ok, answerEl.value);
+      }
+
+      document.getElementById('round-checkBtn').addEventListener('click', check);
+      document.getElementById('round-nextBtn').addEventListener('click', generateTask);
+      document.getElementById('round-resetBtn').addEventListener('click', () => {
+        score = 0;
+        tries = 0;
+        streak = 0;
+        scoreEl.textContent = '0';
+        triesEl.textContent = '0';
+        streakEl.textContent = '0';
+        history.length = 0;
+        historyEl.innerHTML = '';
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'round-feedback';
+        generateTask();
+      });
+      modeEl.addEventListener('change', generateTask);
+      answerEl.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+      generateTask();
+    })();
+
+    (() => {
+      const modeInputs = document.querySelectorAll('input[name="numberline-mode"]');
+      const promptEl = document.getElementById('numberline-prompt');
+      const ticksEl = document.getElementById('numberline-ticks');
+      const markerEl = document.getElementById('numberline-marker');
+      const rangeEl = document.getElementById('numberline-range');
+      const answerEl = document.getElementById('numberline-answer');
+      const answerLabelEl = document.getElementById('numberline-answer-label');
+      const feedbackEl = document.getElementById('numberline-feedback');
+      const scoreEl = document.getElementById('numberline-score');
+      const attemptsEl = document.getElementById('numberline-attempts');
+      let current = { mode: 'read', answer: 0 };
+      let score = 0;
+      let attempts = 0;
+      let answered = false;
+
+      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const formatNumber = value => value < 0 ? `−${Math.abs(value)}` : String(value);
+      const positionPercent = (value, min, max) => 4 + ((value - min) / (max - min)) * 92;
+
+      function randomRange() {
+        const min = -randomInt(1, 5) * 10;
+        const max = randomInt(1, 5) * 10;
+        const span = max - min;
+        const step = span > 80 ? 5 : span > 40 ? 2 : randomInt(1, 2);
+        const labelStep = span <= 20 ? 2 : 10;
+        return { min, max, span, step, labelStep };
+      }
+
+      function renderTicks(min, max, step, labelStep) {
+        let html = '';
+        for (let value = min; value <= max; value += step) {
+          const left = positionPercent(value, min, max);
+          const major = value % labelStep === 0 ? ' numberline-tick-major' : '';
+          html += `<span class="numberline-tick${major}" style="left:${left}%"></span>`;
+          if (value % labelStep === 0) {
+            html += `<span class="numberline-tick-label" style="left:${left}%">${formatNumber(value)}</span>`;
+          }
+        }
+        ticksEl.innerHTML = html;
+      }
+
+      function updatePlacement() {
+        rangeEl.setAttribute('aria-valuetext', formatNumber(Number(rangeEl.value)));
+      }
+
+      function generateTask() {
+        const { min, max, span, step, labelStep } = randomRange();
+        const selectedMode = document.querySelector('input[name="numberline-mode"]:checked').value;
+        const mode = selectedMode === 'mixed' ? (Math.random() < 0.5 ? 'read' : 'place') : selectedMode;
+        const answer = min + randomInt(0, span / step) * step;
+        current = { mode, answer, min, max };
+        answered = false;
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'numberline-feedback';
+        answerEl.value = '';
+        rangeEl.min = String(min);
+        rangeEl.max = String(max);
+        rangeEl.step = String(step);
+        renderTicks(min, max, step, labelStep);
+
+        if (mode === 'read') {
+          promptEl.textContent = 'Welche Zahl ist markiert?';
+          markerEl.hidden = false;
+          markerEl.style.left = `${positionPercent(answer, min, max)}%`;
+          rangeEl.hidden = true;
+          answerLabelEl.hidden = false;
+          answerEl.hidden = false;
+          answerEl.focus();
+        } else {
+          promptEl.textContent = `Trage die Zahl ${formatNumber(answer)} auf dem Zahlenstrahl ein.`;
+          markerEl.hidden = true;
+          rangeEl.hidden = false;
+          rangeEl.value = '0';
+          answerLabelEl.hidden = true;
+          answerEl.hidden = true;
+          updatePlacement();
+          rangeEl.focus();
+        }
+      }
+
+      function checkAnswer() {
+        if (answered) return;
+        const rawAnswer = current.mode === 'read' ? answerEl.value.trim().replace(',', '.') : rangeEl.value;
+        if (rawAnswer === '' || !Number.isFinite(Number(rawAnswer))) {
+          feedbackEl.textContent = 'Bitte gib eine Zahl ein.';
+          feedbackEl.className = 'numberline-feedback bad';
+          return;
+        }
+
+        const value = Number(rawAnswer);
+        const correct = value === current.answer;
+        answered = true;
+        attempts++;
+        if (correct) {
+          score++;
+          feedbackEl.textContent = 'Richtig!';
+          feedbackEl.className = 'numberline-feedback good';
+        } else {
+          feedbackEl.textContent = `Noch nicht richtig. Gesucht war ${formatNumber(current.answer)}.`;
+          feedbackEl.className = 'numberline-feedback bad';
+        }
+        scoreEl.textContent = score;
+        attemptsEl.textContent = attempts;
+      }
+
+      modeInputs.forEach(input => input.addEventListener('change', generateTask));
+      rangeEl.addEventListener('input', updatePlacement);
+      answerEl.addEventListener('keydown', event => { if (event.key === 'Enter') checkAnswer(); });
+      document.getElementById('numberline-check').addEventListener('click', checkAnswer);
+      document.getElementById('numberline-next').addEventListener('click', generateTask);
+      document.getElementById('numberline-reset').addEventListener('click', () => {
+        score = 0;
+        attempts = 0;
+        scoreEl.textContent = '0';
+        attemptsEl.textContent = '0';
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'numberline-feedback';
+        generateTask();
+      });
+      generateTask();
+    })();
+  </script>
+</body>
+</html>
