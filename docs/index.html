@@ -405,6 +405,52 @@
     #numberline .numberline-stat { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f8fafc; text-align: center; }
     #numberline .numberline-stat strong { display: block; font-size: 1.4rem; }
     #numberline .numberline-stat span { color: var(--muted); font-size: .88rem; }
+    #numberline-calc .calculation-body { padding: 30px 34px 34px; }
+    #numberline-calc .calculation-task { max-width: 820px; margin: 0 auto; }
+    #numberline-calc .calculation-modes { border: 0; padding: 0; margin: 0 0 24px; }
+    #numberline-calc .calculation-modes legend { margin-bottom: 10px; font-weight: 800; }
+    #numberline-calc .calculation-mode-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    #numberline-calc .calculation-mode { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; background: #fff; cursor: pointer; font-weight: 700; }
+    #numberline-calc .calculation-mode:has(input:checked) { border-color: var(--primary); background: #eff6ff; color: #173e91; }
+    #numberline-calc .calculation-mode input { margin: 0; accent-color: var(--primary); }
+    #numberline-calc .calculation-prompt { min-height: 32px; margin: 0 0 8px; text-align: center; font-size: 1.15rem; font-weight: 750; }
+    #numberline-calc .calculation-board { padding: 14px 12px 0; border: 1px solid var(--border); border-radius: 12px; background: #f8fafc; }
+    #numberline-calc .calculation-axis { position: relative; height: 140px; max-width: 760px; margin: 0 auto; }
+    #numberline-calc .calculation-track { position: absolute; top: 91px; left: 4%; right: 4%; height: 4px; border-radius: 4px; background: #334155; }
+    #numberline-calc .calculation-tick { position: absolute; top: 85px; width: 2px; height: 16px; transform: translateX(-50%); background: #334155; }
+    #numberline-calc .calculation-tick.major { top: 82px; height: 22px; }
+    #numberline-calc .calculation-tick-label { position: absolute; top: 111px; transform: translateX(-50%); color: #334155; font-size: .78rem; font-weight: 650; }
+    #numberline-calc .calculation-arrows { position: absolute; z-index: 2; inset: 0; pointer-events: none; }
+    #numberline-calc .calculation-arrow { position: absolute; height: 4px; background: #dc2626; }
+    #numberline-calc .calculation-arrow.arrow-right::after, #numberline-calc .calculation-arrow.arrow-left::before { position: absolute; top: -6px; width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; content: ""; }
+    #numberline-calc .calculation-arrow.arrow-right::after { right: -1px; border-left: 11px solid #dc2626; }
+    #numberline-calc .calculation-arrow.arrow-left::before { left: -1px; border-right: 11px solid #dc2626; }
+    #numberline-calc .calculation-origin { position: absolute; z-index: 3; top: 87px; width: 12px; height: 12px; transform: translateX(-50%); border: 2px solid #fff; border-radius: 50%; background: #dc2626; box-shadow: 0 1px 4px #33415580; }
+    #numberline-calc .calculation-direction { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 16px 0 0; }
+    #numberline-calc .calculation-direction-label { font-weight: 750; }
+    #numberline-calc .calculation-direction-options { display: flex; gap: 8px; }
+    #numberline-calc .calculation-direction-choice { min-width: 112px; padding: 9px 14px; border: 1px solid var(--border); border-radius: 8px; color: var(--ink); background: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+    #numberline-calc .calculation-direction-choice[aria-pressed="true"] { border-color: var(--primary); color: #173e91; background: #eff6ff; }
+    #numberline-calc .calculation-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 20px 0 8px; }
+    #numberline-calc .calculation-control { display: grid; gap: 8px; font-weight: 700; }
+    #numberline-calc .calculation-control output { color: var(--primary-dark); }
+    #numberline-calc .calculation-control input { width: 100%; accent-color: var(--primary); }
+    #numberline-calc .calculation-answer-row { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 22px; }
+    #numberline-calc .calculation-answer { width: min(100%, 280px); padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; text-align: center; font: inherit; font-size: 1.1rem; font-weight: 700; }
+    #numberline-calc .calculation-answer:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px #dbeafe; }
+    #numberline-calc .calculation-check, #numberline-calc .calculation-next { padding: 12px 16px; border: 0; border-radius: 9px; font: inherit; font-weight: 750; cursor: pointer; }
+    #numberline-calc .calculation-check { color: #fff; background: var(--primary); }
+    #numberline-calc .calculation-check:hover { background: var(--primary-dark); }
+    #numberline-calc .calculation-next { border: 1px solid var(--border); color: var(--ink); background: #fff; }
+    #numberline-calc .calculation-next:hover { background: #f8fafc; }
+    #numberline-calc .calculation-feedback { min-height: 32px; margin: 14px 0 8px; text-align: center; font-weight: 800; }
+    #numberline-calc .calculation-feedback.good { color: var(--good); }
+    #numberline-calc .calculation-feedback.bad { color: var(--bad); }
+    #numberline-calc .calculation-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 420px; margin: 20px auto 0; }
+    #numberline-calc .calculation-stat { padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #f8fafc; text-align: center; }
+    #numberline-calc .calculation-stat strong { display: block; font-size: 1.4rem; }
+    #numberline-calc .calculation-stat span { color: var(--muted); font-size: .88rem; }
+    #numberline-calc [hidden] { display: none; }
     @media (max-width: 820px) {
       .app-shell { flex-direction: column; }
       .sidebar {
@@ -415,6 +461,7 @@
       .workspace { padding: 18px 12px; }
       .rounding-shell { grid-template-columns: 1fr; }
       #numberline .numberline-body { padding: 24px 22px; }
+      #numberline-calc .calculation-body { padding: 24px 22px; }
     }
 
     @media (max-width: 560px) {
@@ -434,6 +481,14 @@
       #numberline .numberline-answer-row { flex-direction: column; align-items: stretch; }
       #numberline .numberline-answer, #numberline .numberline-check, #numberline .numberline-next { width: 100%; }
       #numberline .numberline-tick-label { font-size: .68rem; }
+      #numberline-calc .calculation-body { padding: 22px 18px; }
+      #numberline-calc .calculation-answer-row { flex-direction: column; align-items: stretch; }
+      #numberline-calc .calculation-answer, #numberline-calc .calculation-check, #numberline-calc .calculation-next { width: 100%; }
+      #numberline-calc .calculation-controls { gap: 12px; }
+      #numberline-calc .calculation-tick-label { font-size: .68rem; }
+      #numberline-calc .calculation-direction { flex-direction: column; align-items: stretch; }
+      #numberline-calc .calculation-direction-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #numberline-calc .calculation-direction-choice { min-width: 0; }
     }
       body { padding: 0; }
       header, .content { padding: 22px 18px; }
@@ -456,6 +511,7 @@
         <button class="nav-btn active" type="button" data-view="arithmetic">Grundrechenarten</button>
         <button class="nav-btn" type="button" data-view="rounding">Runden</button>
         <button class="nav-btn" type="button" data-view="numberline">Zahlenstrahl</button>
+        <button class="nav-btn" type="button" data-view="numberline-calc">Rechnen am Zahlenstrahl</button>
       </nav>
     </aside>
 
@@ -658,6 +714,67 @@
                 <div class="numberline-stat"><strong id="numberline-attempts">0</strong><span>Versuche</span></div>
               </div>
               <button class="numberline-next" id="numberline-reset" type="button" style="display:block;margin:16px auto 0;">Statistik zurücksetzen</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="numberline-calc" class="app-panel">
+        <div class="card" id="numberline-calc-app">
+          <header>
+            <h1>Rechnen am Zahlenstrahl</h1>
+            <p>Lies Pfeile als Rechnung ab oder stelle eine Rechnung mit einem Pfeil dar.</p>
+          </header>
+          <div class="calculation-body">
+            <div class="calculation-task">
+              <fieldset class="calculation-modes">
+                <legend>Aufgabenart</legend>
+                <div class="calculation-mode-options">
+                  <label class="calculation-mode"><input type="radio" name="calculation-mode" value="read" checked> Pfeil lesen</label>
+                  <label class="calculation-mode"><input type="radio" name="calculation-mode" value="draw"> Rechnung darstellen</label>
+                  <label class="calculation-mode"><input type="radio" name="calculation-mode" value="mixed"> Gemischt</label>
+                </div>
+              </fieldset>
+              <p class="calculation-prompt" id="calculation-prompt" aria-live="polite"></p>
+              <div class="calculation-board">
+                <div class="calculation-axis" id="calculation-axis" role="img" aria-label="Zahlenstrahl von −20 bis 20">
+                  <div class="calculation-track" aria-hidden="true"></div>
+                  <div class="calculation-arrows" id="calculation-arrows" aria-hidden="true">
+                    <span class="calculation-arrow arrow-right" id="calculation-arrow"></span>
+                  </div>
+                  <span class="calculation-origin" id="calculation-origin" aria-hidden="true"></span>
+                  <div id="calculation-ticks" aria-hidden="true"></div>
+                </div>
+              </div>
+              <div class="calculation-direction">
+                <span class="calculation-direction-label" id="calculation-direction-label">In welche Richtung zeigt der Pfeil?</span>
+                <div class="calculation-direction-options" role="group" aria-labelledby="calculation-direction-label">
+                  <button class="calculation-direction-choice" id="calculation-direction-left" type="button" data-direction="left" aria-pressed="false">← Links</button>
+                  <button class="calculation-direction-choice" id="calculation-direction-right" type="button" data-direction="right" aria-pressed="false">Rechts →</button>
+                </div>
+              </div>
+              <div class="calculation-controls" id="calculation-controls" hidden>
+                <label class="calculation-control" for="calculation-start">
+                  <span>Startwert: <output id="calculation-start-value" for="calculation-start">0</output></span>
+                  <input id="calculation-start" type="range" min="-20" max="20" step="1" value="0" aria-label="Pfeilstart">
+                </label>
+                <label class="calculation-control" for="calculation-end">
+                  <span>Pfeilziel: <output id="calculation-end-value" for="calculation-end">0</output></span>
+                  <input id="calculation-end" type="range" min="-20" max="20" step="1" value="0" aria-label="Pfeilziel">
+                </label>
+              </div>
+              <div class="calculation-answer-row">
+                <label for="calculation-answer" id="calculation-answer-label">Deine Rechnung:</label>
+                <input class="calculation-answer" id="calculation-answer" type="text" autocomplete="off" placeholder="z. B. -3 - (-4) = 1 oder 3 * 2 = 6">
+                <button class="calculation-check" id="calculation-check" type="button">Prüfen</button>
+                <button class="calculation-next" id="calculation-next" type="button">Neue Aufgabe</button>
+              </div>
+              <p class="calculation-feedback" id="calculation-feedback" aria-live="polite"></p>
+              <div class="calculation-stats" aria-label="Ergebnis">
+                <div class="calculation-stat"><strong id="calculation-score">0</strong><span>Richtig</span></div>
+                <div class="calculation-stat"><strong id="calculation-attempts">0</strong><span>Versuche</span></div>
+              </div>
+              <button class="calculation-next" id="calculation-reset" type="button" style="display:block;margin:16px auto 0;">Statistik zurücksetzen</button>
             </div>
           </div>
         </div>
@@ -1347,6 +1464,256 @@
         feedbackEl.className = 'numberline-feedback';
         generateTask();
       });
+      generateTask();
+    })();
+
+    (() => {
+      const modeInputs = document.querySelectorAll('input[name="calculation-mode"]');
+      const promptEl = document.getElementById('calculation-prompt');
+      const axisEl = document.getElementById('calculation-axis');
+      const ticksEl = document.getElementById('calculation-ticks');
+      const arrowsEl = document.getElementById('calculation-arrows');
+      const originEl = document.getElementById('calculation-origin');
+      const directionButtons = document.querySelectorAll('.calculation-direction-choice');
+      const controlsEl = document.getElementById('calculation-controls');
+      const startEl = document.getElementById('calculation-start');
+      const endEl = document.getElementById('calculation-end');
+      const startValueEl = document.getElementById('calculation-start-value');
+      const endValueEl = document.getElementById('calculation-end-value');
+      const answerLabelEl = document.getElementById('calculation-answer-label');
+      const answerEl = document.getElementById('calculation-answer');
+      const feedbackEl = document.getElementById('calculation-feedback');
+      const scoreEl = document.getElementById('calculation-score');
+      const attemptsEl = document.getElementById('calculation-attempts');
+      let current = null;
+      let score = 0;
+      let attempts = 0;
+      let answered = false;
+      let selectedDirection = null;
+
+      const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const randomNonzero = (min, max) => {
+        let value = 0;
+        while (value === 0) value = randomInt(min, max);
+        return value;
+      };
+      const formatNumber = value => value < 0 ? `−${Math.abs(value)}` : String(value);
+      const positionPercent = value => 4 + ((value + 20) / 40) * 92;
+
+      function formatExpression(includeResult = false) {
+        let expression;
+        if (current.operator === '×') {
+          const first = current.repeat < 0 ? `(${formatNumber(current.repeat)})` : String(current.repeat);
+          const second = current.amount < 0 ? `(${formatNumber(current.amount)})` : String(current.amount);
+          expression = `${first} × ${second}`;
+        } else {
+          const amount = current.amount < 0 ? `(${formatNumber(current.amount)})` : String(current.amount);
+          const operator = current.operator === '-' ? '−' : '+';
+          expression = `${formatNumber(current.start)} ${operator} ${amount}`;
+        }
+        return includeResult ? `${expression} = ${formatNumber(current.result)}` : expression;
+      }
+
+      function renderTicks() {
+        let html = '';
+        for (let value = -20; value <= 20; value++) {
+          const left = positionPercent(value);
+          const major = value % 5 === 0;
+          html += `<span class="calculation-tick${major ? ' major' : ''}" style="left:${left}%"></span>`;
+          if (major) html += `<span class="calculation-tick-label" style="left:${left}%">${formatNumber(value)}</span>`;
+        }
+        ticksEl.innerHTML = html;
+      }
+
+      function renderArrows(segments, repeated = false, directionOverride = null) {
+        arrowsEl.innerHTML = segments.map((segment, index) => {
+          const startPosition = positionPercent(segment.start);
+          const endPosition = positionPercent(segment.end);
+          const direction = directionOverride
+            ? `arrow-${directionOverride}`
+            : segment.end < segment.start ? 'arrow-left' : 'arrow-right';
+          const top = repeated ? 8 + index * 14 : 48;
+          const id = index === 0 ? ' id="calculation-arrow"' : '';
+          return `<span class="calculation-arrow ${direction}"${id} style="left:${Math.min(startPosition, endPosition)}%;width:${Math.abs(endPosition - startPosition)}%;top:${top}px"></span>`;
+        }).join('');
+      }
+
+      function updateArrow(start, end, directionOverride = null) {
+        const direction = directionOverride || (end < start ? 'left' : 'right');
+        const arrowStart = direction === 'left' ? Math.max(start, end) : Math.min(start, end);
+        const arrowEnd = direction === 'left' ? Math.min(start, end) : Math.max(start, end);
+        renderArrows([{ start, end }], false, direction);
+        originEl.style.left = `${positionPercent(start)}%`;
+        axisEl.setAttribute('aria-label', `Pfeil von ${formatNumber(arrowStart)} nach ${formatNumber(arrowEnd)} auf dem Zahlenstrahl von −20 bis 20`);
+      }
+
+      function updateMultiplication(start, end, directionOverride = null) {
+        const jumpCount = Math.abs(current.repeat);
+        const jumpSize = (end - start) / jumpCount;
+        const segments = Array.from({ length: jumpCount }, (_, index) => ({
+          start: start + index * jumpSize,
+          end: start + (index + 1) * jumpSize
+        }));
+        renderArrows(segments, true, directionOverride);
+        const arrowStart = directionOverride === 'left' ? end : start;
+        const arrowEnd = directionOverride === 'left' ? start : end;
+        originEl.style.left = `${positionPercent(start)}%`;
+        axisEl.setAttribute('aria-label', `${jumpCount} gleiche Sprünge von ${formatNumber(arrowStart)} nach ${formatNumber(arrowEnd)} auf dem Zahlenstrahl von −20 bis 20`);
+      }
+
+      function expectedDirection() {
+        if (current.operator === '×') return 'right';
+        if (current.amount < 0) return 'left';
+        return current.operator === '+' ? 'right' : 'left';
+      }
+
+      function updateControls() {
+        const start = Number(startEl.value);
+        const end = Number(endEl.value);
+        startValueEl.value = formatNumber(start);
+        endValueEl.value = formatNumber(end);
+        if (current.operator === '×') {
+          updateMultiplication(start, end, current.mode === 'draw' ? selectedDirection : null);
+        } else {
+          updateArrow(start, end, current.mode === 'draw' ? selectedDirection : null);
+        }
+      }
+
+      function generateTask() {
+        const selectedMode = document.querySelector('input[name="calculation-mode"]:checked').value;
+        const mode = selectedMode === 'mixed' ? (Math.random() < 0.5 ? 'read' : 'draw') : selectedMode;
+        const operator = ['+', '-', '×'][randomInt(0, 2)];
+        let start = 0;
+        let amount;
+        let result;
+        let repeat = null;
+
+        if (operator === '×') {
+          repeat = randomInt(1, 4);
+          amount = randomInt(1, 4);
+          result = repeat * amount;
+        } else {
+          start = randomInt(-10, 10);
+          do {
+            amount = randomNonzero(-8, 8);
+            result = operator === '+' ? start + amount : start - amount;
+          } while (result < -20 || result > 20);
+        }
+
+        current = { mode, start, amount, result, operator, repeat };
+        answered = false;
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'calculation-feedback';
+        answerEl.value = '';
+        selectedDirection = null;
+        directionButtons.forEach(button => button.setAttribute('aria-pressed', 'false'));
+
+        const drawing = mode === 'draw';
+        promptEl.textContent = drawing
+          ? `Stelle ${formatExpression()} am Zahlenstrahl dar.`
+          : 'Welche Rechnung stellt der Pfeil dar?';
+        controlsEl.hidden = !drawing;
+        answerLabelEl.hidden = drawing;
+        answerEl.hidden = drawing;
+
+        startEl.min = '-20';
+        startEl.max = '20';
+        startEl.step = '1';
+        startEl.disabled = false;
+        endEl.min = '-20';
+        endEl.max = '20';
+        endEl.step = '1';
+
+        if (drawing) {
+          startEl.value = '0';
+          endEl.value = '0';
+          if (operator === '×') {
+            startEl.max = String(20 - result);
+          }
+          updateControls();
+        } else {
+          if (operator === '×') updateMultiplication(0, result, expectedDirection());
+          else updateArrow(start, result, expectedDirection());
+          answerEl.focus();
+        }
+      }
+
+      function checkAnswer() {
+        if (answered || !current) return;
+        let mathCorrect = false;
+
+        if (current.mode === 'draw') {
+          mathCorrect = current.operator === '×'
+            ? Number(endEl.value) - Number(startEl.value) === current.result
+            : Number(startEl.value) === current.start && Number(endEl.value) === current.result;
+        } else {
+          const normalized = answerEl.value.trim().replace(/−/g, '-').replace(/[()]/g, '').replace(/[×·*]/g, 'x').replace(/\s+/g, '');
+          const match = normalized.match(/^(-?\d+)([+\-x])(-?\d+)(?:=(-?\d+))?$/);
+          const operator = match && match[2] === 'x' ? '×' : match && match[2];
+          const firstOperand = current.operator === '×' ? current.repeat : current.start;
+          mathCorrect = Boolean(match)
+            && Number(match[1]) === firstOperand
+            && operator === current.operator
+            && Number(match[3]) === current.amount
+            && (match[4] === undefined || Number(match[4]) === current.result);
+        }
+
+        if (current.mode === 'read' && !answerEl.value.trim()) {
+          feedbackEl.textContent = 'Gib die Rechnung ein, die zum Pfeil passt.';
+          feedbackEl.className = 'calculation-feedback bad';
+          return;
+        }
+        if (selectedDirection === null) {
+          feedbackEl.textContent = 'Wähle links oder rechts als Pfeilrichtung.';
+          feedbackEl.className = 'calculation-feedback bad';
+          return;
+        }
+
+        answered = true;
+        attempts++;
+        const directionCorrect = selectedDirection === expectedDirection();
+        const correct = mathCorrect && directionCorrect;
+        if (correct) {
+          score++;
+          feedbackEl.textContent = 'Richtig!';
+          feedbackEl.className = 'calculation-feedback good';
+        } else if (mathCorrect && !directionCorrect) {
+          feedbackEl.textContent = `Der Pfeil zeigt nach ${expectedDirection() === 'left' ? 'links' : 'rechts'}.`;
+          feedbackEl.className = 'calculation-feedback bad';
+        } else if (current.mode === 'draw') {
+          feedbackEl.textContent = current.operator === '×'
+            ? `Die Sprünge sollen bei ${formatNumber(current.result)} enden.`
+            : `Der Pfeil soll von ${formatNumber(current.start)} nach ${formatNumber(current.result)} gehen.`;
+          feedbackEl.className = 'calculation-feedback bad';
+        } else {
+          feedbackEl.textContent = `Eine passende Rechnung lautet ${formatExpression(true)}.`;
+          feedbackEl.className = 'calculation-feedback bad';
+        }
+        scoreEl.textContent = String(score);
+        attemptsEl.textContent = String(attempts);
+      }
+
+      modeInputs.forEach(input => input.addEventListener('change', generateTask));
+      directionButtons.forEach(button => button.addEventListener('click', () => {
+        const direction = button.dataset.direction;
+        selectedDirection = direction;
+        directionButtons.forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
+        if (current.mode !== 'draw') return;
+        updateControls();
+      }));
+      startEl.addEventListener('input', updateControls);
+      endEl.addEventListener('input', updateControls);
+      answerEl.addEventListener('keydown', event => { if (event.key === 'Enter') checkAnswer(); });
+      document.getElementById('calculation-check').addEventListener('click', checkAnswer);
+      document.getElementById('calculation-next').addEventListener('click', generateTask);
+      document.getElementById('calculation-reset').addEventListener('click', () => {
+        score = 0;
+        attempts = 0;
+        scoreEl.textContent = '0';
+        attemptsEl.textContent = '0';
+        generateTask();
+      });
+      renderTicks();
       generateTask();
     })();
   </script>
